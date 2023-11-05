@@ -1,9 +1,8 @@
-from raycraft import RayServeDeployment
-from starlette.requests import Request
-
+from raycraft import RayCraftAPI
 from transformers import pipeline
+from pydantic import BaseModel
 
-translator_service = RayServeDeployment(
+translator_service = RayCraftAPI(
     num_replicas=2,
     ray_actor_options={"num_cpus": 0.2, "num_gpus": 0},
 )
@@ -25,10 +24,13 @@ def translate(app, text: str) -> str:
     return translation
 
 
-@translator_service.post  # ("/")
-async def ingress(app, http_request: Request) -> str:
-    english_text: str = await http_request.json()
-    return app.translate(english_text)
+class EnglishText(BaseModel):
+    english_text: str
+
+
+@translator_service.post("/test/")
+async def ingress(app, english_text: EnglishText) -> str:
+    return app.translate(english_text.english_text)
 
 
 app = translator_service()

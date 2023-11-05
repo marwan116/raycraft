@@ -1,1 +1,1 @@
-from .api import RayServeDeployment
+from .api import RayCraftAPI

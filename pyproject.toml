@@ -29,6 +29,7 @@ ray = {extras = ["serve"], version = "^2.8.0"}
 fastapi = "^0.99.0"
 transformers = "^4.35.0"
 torch = "^2.1.0"
+varname = "^0.12.0"
 
 [tool.poetry.dev-dependencies]
 # type hints
