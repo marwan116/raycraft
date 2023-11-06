@@ -1,18 +1,9 @@
+import inspect
 from ray.serve import deployment, ingress
 from varname import varname
 from fastapi import FastAPI
 from enum import Enum
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Sequence,
-    Set,
-    Type,
-    Union,
-)
+from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Type, Union
 
 from fastapi import routing
 from fastapi.datastructures import Default
@@ -21,6 +12,8 @@ from fastapi.types import DecoratedCallable
 from fastapi.utils import generate_unique_id
 from starlette.responses import JSONResponse, Response
 from starlette.routing import BaseRoute
+# from mypy_extensions import VarArg, KwArg
+# from typing_extensions import StaticMethod
 
 IncEx = Union[Set[int], Set[str], Dict[int, Any], Dict[str, Any]]
 
@@ -28,6 +21,22 @@ IncEx = Union[Set[int], Set[str], Dict[int, Any], Dict[str, Any]]
 def to_camel_case(text: str) -> str:
     text = text.replace("_", " ")
     return "".join(x for x in text.title() if not x.isspace())
+
+
+def maybe_wrap_as_staticmethod(
+    func: Callable[..., Any]
+# ) -> Union[StaticMethod[[VarArg(Any), KwArg(Any)], Any], Callable[..., Any]]:
+) -> Callable[..., Any]:
+    params = list(inspect.signature(func).parameters)
+
+    if len(params) == 0:
+        return staticmethod(func) # type: ignore [return-value]
+
+    first_param = params[0]
+    if first_param not in {"app"}:
+        return staticmethod(func) # type: ignore [return-value]
+    else:
+        return func
 
 
 class RayCraftAPI:
@@ -499,7 +508,7 @@ class RayCraftAPI:
                     for method_name, method in self._remote_methods.items()
                 },
                 **{
-                    method_name: method_dict["func"]
+                    method_name: maybe_wrap_as_staticmethod(method_dict["func"])
                     for method_name, method_dict in self._http_methods.items()
                 },
             },
