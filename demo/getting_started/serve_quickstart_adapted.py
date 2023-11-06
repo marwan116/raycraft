@@ -1,5 +1,6 @@
-from raycraft import RayCraftAPI
-from transformers import pipeline
+from typing import cast
+from raycraft import App, RayCraftAPI
+from transformers import pipeline, Pipeline
 from pydantic import BaseModel
 
 translator_service = RayCraftAPI(
@@ -9,19 +10,19 @@ translator_service = RayCraftAPI(
 
 
 @translator_service.init
-def model():
+def model() -> Pipeline:
     return pipeline("translation_en_to_fr", model="t5-small")
 
 
 @translator_service.remote
-def translate(app, text: str) -> str:
+def translate(app: App, text: str) -> str:
     # Run inference
     model_output = app.model(text)
 
     # Post-process output to return only the translation text
     translation = model_output[0]["translation_text"]
 
-    return translation
+    return cast(str, translation)
 
 
 class EnglishText(BaseModel):
@@ -29,8 +30,8 @@ class EnglishText(BaseModel):
 
 
 @translator_service.post("/test/")
-async def ingress(app, english_text: EnglishText) -> str:
-    return app.translate(english_text.english_text)
+async def ingress(app: App, english_text: EnglishText) -> str:
+    return app.translate(english_text.english_text) # type: ignore
 
 
 app = translator_service()
