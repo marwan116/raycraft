@@ -10,23 +10,26 @@ e.g. given you have a FastAPI app:
 ```python
 from fastapi import FastAPI
 
-app = FastAPI()
+simple_service = FastAPI()
 
-@app.get("/")
-async def read_root():
+@simple_service.post("/")
+async def read_root() -> dict[str, str]:
     return {"Hello": "World"}
 ```
 
 You can now run it distributed with Ray using raycraft with a single change:
 
 ```python
-from raycraft import RayCraftAPI
+from raycraft import RayCraftAPI, App
 
-app = RayCraftAPI()
+simple_service = RayCraftAPI()
 
-@app.get("/")
-async def read_root():
+@simple_service.post("/")
+async def read_root(app: App) -> dict[str, str]:
     return {"Hello": "World"}
+
+
+app = simple_service()
 ```
 
 With Ray Serve, you can now:
