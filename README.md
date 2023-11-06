@@ -17,19 +17,18 @@ async def read_root() -> dict[str, str]:
     return {"Hello": "World"}
 ```
 
-You can now run it distributed with Ray using raycraft with a simple change:
+You can now run it distributed with Ray using raycraft with simple changes:
 
-```python
-from raycraft import RayCraftAPI, App
+```diff
++ from raycraft import RayCraftAPI
 
-simple_service = RayCraftAPI()
++ simple_service = RayCraftAPI()
 
 @simple_service.post("/")
-async def read_root(app: App) -> dict[str, str]:
+async def read_root() -> dict[str, str]:
     return {"Hello": "World"}
 
-
-app = simple_service()
++ app = simple_service()
 ```
 
 With Ray Serve, you can now:
