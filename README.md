@@ -17,7 +17,7 @@ async def read_root() -> dict[str, str]:
     return {"Hello": "World"}
 ```
 
-You can now run it distributed with Ray using raycraft with a single change:
+You can now run it distributed with Ray using raycraft with a simple change:
 
 ```python
 from raycraft import RayCraftAPI, App
