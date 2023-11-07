@@ -1,6 +1,11 @@
 from .api import RayCraftAPI
-from typing import Any
+from typing import Protocol, Any
 
-App = Any
+class App(Protocol):
+    """A very generic application interface."""
+    
+    # to avoid attribute errors
+    def __getattr__(self, name: str) -> Any:
+        ...
 
-__all__ = [App, RayCraftAPI]
+__all__ = ["App", "RayCraftAPI"]
