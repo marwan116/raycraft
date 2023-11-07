@@ -3,9 +3,7 @@
 ## Motivation
 FastAPI + Ray = <3
 
-Let's take a FastAPI app and supercharge it with Ray Serve
-
-e.g. given you have a FastAPI app:
+Let's take a FastAPI app and supercharge it with raycraft
 
 ```python
 from fastapi import FastAPI
@@ -17,7 +15,7 @@ async def read_root() -> dict[str, str]:
     return {"Hello": "World"}
 ```
 
-You can now run it distributed with Ray using raycraft with simple changes:
+You can now run it using raycraft using the RayCraftAPI instead of FastAPI with only two lines of code changes
 
 ```diff
 + from raycraft import RayCraftAPI
@@ -52,7 +50,7 @@ async def translate(text: str):
     return {"translation": translated}
 ```
 
-We can now run this app with Ray Serve using raycraft `demo.py`
+We can now build this app using raycraft with the same two lines of code changes
 
 ```python
 from raycraft import RayCraftAPI
@@ -78,7 +76,7 @@ We then call the following command to run the app:
 raycraft run demo:app
 ```
 
-Ok now for the distributed part, let's say we want to run this app on 2 replicas, each replica taking half a GPU, we can do this by running the following command:
+Ok now for the distributed part, let's say we want to run this app on 2 "replicas", each "replica" taking half a GPU, and we want to properly load balance between the replicas, we can do this by running the following command:
 
 ```python
 from raycraft import RayCraftAPI
@@ -111,17 +109,16 @@ app = RayCraftAPI(ray_actor_options={"num_gpus": 0.5}, num_replicas=2)
 def model():
     return pipeline("translation_en_to_fr", model="t5-small")
 
-def translate(text: str):
-    model = load_model()
-    translated = model(text)[0]["translation_text"]
+def translate(app: App, text: str):
+    translated = app.model(text)[0]["translation_text"]
     return translated
 
 @app.post("/")
 async def translate(app: App, text: str):
-    return translate(text) 
+    return translate(app, text) 
 ```
 
-RayCraft is built on top of [Ray Serve](https://docs.ray.io/en/latest/serve/index.html)
+RayCraft is a thin-layer built on top of [Ray Serve](https://docs.ray.io/en/latest/serve/index.html) adopting a functional interface to ease the migration from fastAPI apps.
 
 With Ray Serve, you can now:
 - Scale your app deployment to multiple replicas running on different machines
