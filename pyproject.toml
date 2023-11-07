@@ -41,6 +41,9 @@ pytest-sugar = "0.9.7"
 nox = "2023.4.22"
 nox-poetry = "1.0.2"
 
+[tool.poetry.scripts]
+raycraft = "raycraft.cli:cli"
+
 [tool.poetry.group.demo.dependencies]
 transformers = "^4.35.0"
 torch = "^2.1.0"
@@ -64,6 +67,14 @@ allow_untyped_decorators = true
 
 [[tool.mypy.overrides]]
 module = "varname"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "yaml"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "transformers"
 ignore_missing_imports = true
 
 [tool.isort]

@@ -31,10 +31,5 @@ class EnglishText(BaseModel):
 
 @translator_service.post("/test/")
 async def ingress(app: App, english_text: EnglishText) -> str:
-    return app.translate(english_text.english_text) # type: ignore
-
-
-app = translator_service()
-
-if __name__ == "__main__":
-    print(app)
+    """Translate English text to French."""
+    return app.translate(english_text.english_text)  # type: ignore

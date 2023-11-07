@@ -27,8 +27,6 @@ You can now run it distributed with Ray using raycraft with simple changes:
 @simple_service.post("/")
 async def read_root() -> dict[str, str]:
     return {"Hello": "World"}
-
-+ app = simple_service()
 ```
 
 With Ray Serve, you can now:
@@ -99,3 +97,7 @@ Using pip:
 pip install raycraft
 ```
 
+
+## Roadmap
+- Streaming support using websockets
+- Deployment guide
